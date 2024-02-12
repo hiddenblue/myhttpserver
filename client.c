@@ -14,7 +14,7 @@
 int main(int argc, char *argv[])
 {
     if (argc < 3 || argc > 4)
-        DieWithUserMessage("Parameters error"
+        DieWithUserMessage("Parameters error "
                            "<Server Address> <Echo Word> [<server Port>]");
 
     char *serverIP = argv[1];
