@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <netinet/in.h>
 
 // #define BUFSIZE 500
 
@@ -52,6 +53,11 @@ int main(int argc, char *argv[])
     }
     else
         fprintf(stdout, "client successfully connect to %s\n", serverIP);
+
+    // print peername and remote name
+
+    printRemoteSocket(AF_INET, serverSocket);
+    printLocalSocket(AF_INET, serverSocket);
 
     // client 应用层
     rtnVal = clientAppliction(serverSocket, echoString);

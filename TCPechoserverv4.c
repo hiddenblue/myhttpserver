@@ -70,6 +70,11 @@ int main(int argc, char *argv[])
         errno = 0;
         // 这里的addr_len必须是指针类型，否则会出错。
         int clientSocket = accept(serverSocket, (struct sockaddr *)&clientAddr, &clientAddrLen);
+
+        // print socket local and peer infomation
+        printLocalSocket(AF_INET, clientSocket);
+        printRemoteSocket(AF_INET, clientSocket);
+
         if (errno != 0)
         {
             perror("server accept error");

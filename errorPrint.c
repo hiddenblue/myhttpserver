@@ -84,3 +84,80 @@ int clientAppliction(int serverSocket, const char *sendstring)
     else
         return 0;
 }
+
+// 先将就一下吧，后面再实现两套共用的代码
+void printLocalSocket(int af, int socket)
+{
+    if (af == AF_INET)
+    {
+        struct sockaddr_in socketAddr;
+        char socketIP[INET_ADDRSTRLEN];
+        socklen_t localAddrLen = sizeof(socketAddr);
+        errno = 0;
+        int rtnVal = 0;
+        rtnVal = getsockname(socket, (struct sockaddr *)&socketAddr, &localAddrLen);
+
+        if (errno != 0 || rtnVal != 0)
+        {
+            perror("printSocketInfo");
+            DieWithUserMessage("printSocketInfo() failed\n");
+        }
+        fprintf(stdout, "Local socketIP is: %s Port: ", inet_ntop(af, &socketAddr.sin_addr.s_addr, socketIP, sizeof(socketIP)));
+        fprintf(stdout, "%d\n", ntohs(socketAddr.sin_port));
+    }
+    else if (af == AF_INET6)
+    {
+        struct sockaddr_in6 socketAddr;
+        char socketIP[INET_ADDRSTRLEN];
+        socklen_t localAddrLen = sizeof(socketAddr);
+        errno = 0;
+        int rtnVal = 0;
+        rtnVal = getsockname(socket, (struct sockaddr *)&socketAddr, &localAddrLen);
+
+        if (errno != 0 || rtnVal != 0)
+        {
+            perror("printSocketInfo");
+            DieWithUserMessage("printSocketInfo() failed\n");
+        }
+        fprintf(stdout, "Local socketIP is: %s Port: ", inet_ntop(af, &socketAddr.sin6_addr, socketIP, sizeof(socketIP)));
+        fprintf(stdout, "%d\n", ntohs(socketAddr.sin6_port));
+    }
+}
+
+void printRemoteSocket(int af, int socket)
+{
+    if (af == AF_INET)
+    {
+        struct sockaddr_in socketAddr;
+        char socketIP[INET_ADDRSTRLEN];
+        socklen_t localAddrLen = sizeof(socketAddr);
+        errno = 0;
+        int rtnVal = 0;
+        rtnVal = getpeername(socket, (struct sockaddr *)&socketAddr, &localAddrLen);
+
+        if (errno != 0 || rtnVal != 0)
+        {
+            perror("printSocketInfo");
+            DieWithUserMessage("printSocketInfo() failed\n");
+        }
+        fprintf(stdout, "Remote socketIP is: %s Port: ", inet_ntop(af, &socketAddr.sin_addr.s_addr, socketIP, sizeof(socketIP)));
+        fprintf(stdout, "%d\n", ntohs(socketAddr.sin_port));
+    }
+    else if (af == AF_INET6)
+    {
+        struct sockaddr_in6 socketAddr;
+        char socketIP[INET_ADDRSTRLEN];
+        socklen_t localAddrLen = sizeof(socketAddr);
+        errno = 0;
+        int rtnVal = 0;
+        rtnVal = getsockname(socket, (struct sockaddr *)&socketAddr, &localAddrLen);
+
+        if (errno != 0 || rtnVal != 0)
+        {
+            perror("printSocketInfo");
+            DieWithUserMessage("printSocketInfo() failed\n");
+        }
+        fprintf(stdout, "Remote socketIP is: %s Port: ", inet_ntop(af, &socketAddr.sin6_addr, socketIP, sizeof(socketIP)));
+        fprintf(stdout, "%d\n", ntohs(socketAddr.sin6_port));
+    }
+}
