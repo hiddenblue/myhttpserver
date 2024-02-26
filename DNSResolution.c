@@ -28,7 +28,10 @@ int main(int argc, char *argv[])
 
     int rtnVal = getaddrinfo(servername, serverPort, &addrHint, &addrList);
     if (rtnVal != 0)
+    {
+        fputs(gai_strerror(rtnVal), stderr);
         DieWithSystemMessage("getaaddrinfo() failed");
+    }
 
     for (struct addrinfo *addr = addrList; addr != NULL; addr = addr->ai_next)
     {
