@@ -14,5 +14,8 @@ void DieWithUserMessage(const char *msg);
 
 void DieWithSystemMessage(const char *msg);
 
-void HandleTCPClient(int clientSock);
+void HandleTCPClient(int clientSocket);
+
+int clientAppliction(int serversocket, const char *sendString);
+
 #endif
