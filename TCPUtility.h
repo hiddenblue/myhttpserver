@@ -14,4 +14,6 @@
 #ifndef __TCPUTILITY_H
 #define __TCPUTILITY_H
 
+int setupTCPServerconn(const char *servername, const char *port);
+
 #endif

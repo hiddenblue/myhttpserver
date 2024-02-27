@@ -24,6 +24,7 @@ int setupTCPServerconn(const char *servername, const char *port)
     int serverSocket = -1;
     for (struct addrinfo *addr = addrList; addr != NULL; addr = addr->ai_next)
     {
+        fputs("************************************************\n", stdout);
         PrintSockaddr(addr->ai_addr, stdout);
 
         int serverSocket = socket(addr->ai_family, SOCK_STREAM, IPPROTO_TCP);
@@ -32,7 +33,7 @@ int setupTCPServerconn(const char *servername, const char *port)
             fprintf("create socket for server :%s %s error\n", servername, port);
             continue;
         }
-        fprintf("successfully create socket for server %s \n", servername);
+        fprintf("successfully create socket: %d for server %s \n", serverSocket, servername);
 
         errno = 0;
         if ((connect(serverSocket, (struct sockaddr *)addr->ai_addr, addr->ai_addrlen)) != 0)
@@ -41,10 +42,13 @@ int setupTCPServerconn(const char *servername, const char *port)
             if (errno != 0)
             {
                 perror("client connect server failed");
+                close(serverSocket);
+                serverSocket = -1;
                 continue;
             }
-            else
-                fprintf(stdout, "client successfully connect to %s\n", servername);
         }
+        fprintf(stdout, "client successfully connect to %s\n", servername);
+        break;
     }
+    return serverSocket;
 }
