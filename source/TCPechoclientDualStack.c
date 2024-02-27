@@ -23,11 +23,13 @@ int main(int argc, char *argv[])
     char *serverName = argv[1];
     char *echoString = argv[2];
 
-    char *serverPort = (argc == 4) ? argv[4] : "7";
+    char *serverPort = (argc == 4) ? argv[3] : "7";
     // in_port_t servePort = (argc == 4) ? atoi(argv[3]) : 7;
     // 7 is a default echo port;
 
     int serverSocket = setupTCPServerconn(serverName, serverPort);
+    if (serverSocket < 0)
+        DieWithUserMessage("setupTCPServerconn() failed");
 
     // print peername and remote name
 
@@ -38,5 +40,8 @@ int main(int argc, char *argv[])
     int rtnVal = clientAppliction(serverSocket, echoString);
     if (rtnVal != 0)
         DieWithUserMessage("clientAppliction() error");
+    else
+        fprintf(stdout, "appliction layer executed\n");
+    fprintf(stdout, "client is closing\n\n");
     return 0;
 }

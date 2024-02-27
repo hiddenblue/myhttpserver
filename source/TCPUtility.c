@@ -18,7 +18,7 @@ int setupTCPServerconn(const char *servername, const char *port)
     {
         DieWithSystemMessage("getaddrinfo() failed");
         fputs(gai_strerror(rtnVal), stderr);
-        fputc("\n", stderr);
+        fputc('\n', stderr);
     }
 
     int serverSocket = -1;
@@ -27,13 +27,13 @@ int setupTCPServerconn(const char *servername, const char *port)
         fputs("************************************************\n", stdout);
         PrintSockaddr(addr->ai_addr, stdout);
 
-        int serverSocket = socket(addr->ai_family, SOCK_STREAM, IPPROTO_TCP);
+        serverSocket = socket(addr->ai_family, SOCK_STREAM, IPPROTO_TCP);
         if (serverSocket < 0)
         {
-            fprintf("create socket for server :%s %s error\n", servername, port);
+            fprintf(stderr, "create socket for server :%s %s error\n", servername, port);
             continue;
         }
-        fprintf("successfully create socket: %d for server %s \n", serverSocket, servername);
+        fprintf(stdout, "successfully create socket: %d for server %s \n", serverSocket, servername);
 
         errno = 0;
         if ((connect(serverSocket, (struct sockaddr *)addr->ai_addr, addr->ai_addrlen)) != 0)

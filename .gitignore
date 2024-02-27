@@ -1,3 +1,7 @@
 .vscode
 *.o
 *.out
+./build
+./build/*
+./obj
+./obj/*

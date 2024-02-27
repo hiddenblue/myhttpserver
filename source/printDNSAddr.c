@@ -40,6 +40,6 @@ void PrintSockaddr(struct sockaddr *sockAddr, FILE *stream)
         fprintf(stdout, "Address: %s\n", buffer);
         // 这里port不能等于0， 不是一个合法的端口
         if (port != 0)
-            fprintf(stdout, "Port: %d", port);
+            fprintf(stdout, "Port: %d\n", port);
     }
 }
