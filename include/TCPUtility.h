@@ -16,4 +16,6 @@
 
 int setupTCPServerconn(const char *servername, const char *port);
 
+int setupTCPClientConn(const char *serverPort);
+
 #endif

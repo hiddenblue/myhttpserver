@@ -1,5 +1,6 @@
 #include "TCPUtility.h"
 
+// funcction help echo client setup tcp connection to server v4 or v6
 int setupTCPServerconn(const char *servername, const char *port)
 {
     if (servername == NULL || port == NULL)
@@ -50,5 +51,71 @@ int setupTCPServerconn(const char *servername, const char *port)
         fprintf(stdout, "client successfully connect to %s\n", servername);
         break;
     }
+    freeaddrinfo(addrList);
+    return serverSocket;
+}
+
+int setupTCPClientConn(const char *serverPort)
+{
+    static const int MAXINCOME = 5;
+
+    // make perrno work at the start of function
+    errno = 0;
+
+    fprintf(stdout, "start setupTCPClientConn() serverPort: %s\n", serverPort);
+
+    if (serverPort == NULL)
+        DieWithUserMessage("setupTCPClientConn() serverPort NULL pointer");
+
+    struct addrinfo addrinfoHint;
+    memset(&addrinfoHint, 0, sizeof(addrinfoHint));
+    addrinfoHint.ai_family = AF_UNSPEC;
+    // we accept both ipv4 and ipv6 address
+    addrinfoHint.ai_flags = AI_PASSIVE;
+    // combine this flags and set getaddrinfo first parm to NULL
+    addrinfoHint.ai_protocol = IPPROTO_TCP;
+    addrinfoHint.ai_socktype = SOCK_STREAM;
+
+    struct addrinfo *AddrList;
+
+    int rtnVal = getaddrinfo(NULL, serverPort, &addrinfoHint, &AddrList);
+    if (rtnVal != 0 && errno != 0)
+    {
+        perror("getaddrinfo()");
+        DieWithSystemMessage("getaddrinfo() failed");
+    }
+
+    int serverSocket = -1;
+    for (struct addrinfo *addrInfo = AddrList; addrInfo != NULL; addrInfo = addrInfo->ai_next)
+    {
+        PrintSockaddr(addrInfo->ai_addr, stdout);
+
+        fprintf(stdout, "start create socket, bind, listen\n");
+        // 这里下面又不小心把serverSocket声明定义了，导致最后又变成1出错了
+        serverSocket = socket(addrInfo->ai_family, addrInfo->ai_socktype, addrInfo->ai_protocol);
+        if (serverSocket < 0)
+        {
+            fprintf(stdout, "host create socket failed. continue\n");
+            perror("sockt()");
+            continue;
+        }
+        fprintf(stdout, "creat socket: %d successfully\n", serverSocket);
+
+        errno = 0;
+        if (bind(serverSocket, (struct sockaddr *)addrInfo->ai_addr, sizeof(*addrInfo->ai_addr)) == 0 &&
+            listen(serverSocket, MAXINCOME) == 0)
+        {
+            fprintf(stdout, "server bind and listen successfully\n");
+            break;
+        }
+        else
+        {
+            close(serverSocket);
+            serverSocket = -1;
+            perror("bind() and listen()");
+            continue;
+        }
+    }
+    freeaddrinfo(AddrList);
     return serverSocket;
 }

@@ -10,6 +10,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <unistd.h>
+#include "TCPUtility.h"
 
 #define MAXINCOME 5
 
@@ -27,38 +28,9 @@ int main(int argc, char *argv[])
     if (serverPort == 0)
         DieWithUserMessage("atoi() failed");
 
-    int serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-    // new a sockaddr for server binding
-    struct sockaddr_in serverAddr;
-    serverAddr.sin_family = AF_INET;
-    // 这里ipv6的IN6ADDR_ANY不需要转换成network byte order
-    // 也不需要检查是否成功，因为是内置的宏
-    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serverAddr.sin_port = htons(serverPort);
-
-    // bind
-    errno = 0;
-    if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
-    {
-        if (errno != 0)
-        {
-            perror("server bind error");
-            exit(EXIT_FAILURE);
-        }
-        DieWithSystemMessage("bind() failed");
-    }
-    fputs("server bind successfully\n", stdout);
-
-    // fprintf可以用控制输出的格式控制符
-    fprintf(stdout, "Server Bind to %u port successfully\n", serverPort);
-
-    // listen and get a new socket
-    if (listen(serverSocket, MAXINCOME) == -1)
-        DieWithSystemMessage("listen() failed");
-
-    fprintf(stdout, "server listen at %u\n", serverPort);
-    // listen
+    int serverSocket = setupTCPClientConn(argv[1]);
+    if (serverSocket < 0)
+        DieWithUserMessage("setupTCPClientConn() failed");
 
     // 后面是一个无线循环的accept，然后处理请求的过程
     for (;;)
