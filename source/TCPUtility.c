@@ -55,7 +55,7 @@ int setupTCPServerconn(const char *servername, const char *port)
     return serverSocket;
 }
 
-int setupTCPClientConn(const char *serverPort)
+int setupTCPListen(const char *serverPort)
 {
     static const int MAXINCOME = 5;
 
@@ -118,4 +118,42 @@ int setupTCPClientConn(const char *serverPort)
     }
     freeaddrinfo(AddrList);
     return serverSocket;
+}
+
+/**
+ * @brief input an serverSocket return the clientSocket create by accept()
+ * @param serverSocket
+ * @return clientSocket
+ */
+int acceptTCPConn(int serverSocket)
+{
+    errno = 0;
+
+    struct sockaddr_storage clientAddr;
+    memset(&clientAddr, 0, sizeof(clientAddr));
+    socklen_t clientAddrLen = sizeof(clientAddr);
+    // 这里的addr_len必须是指针类型，否则会出错。
+    int clientSocket = accept(serverSocket, (struct sockaddr *)&clientAddr, &clientAddrLen);
+
+    // print socket local and peer infomation
+    printLocalSocket(clientAddr.ss_family, clientSocket);
+    printRemoteSocket(clientAddr.ss_family, clientSocket);
+
+    if (errno != 0)
+    {
+        PRINTERROR(strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    fprintf(stdout, "accept clinet income successfully\n");
+    if (clientSocket == -1)
+        DieWithSystemMessage("accept() failed");
+
+    errno = 0;
+    PrintSockaddr((struct sockaddr *)&clientAddr, stdout);
+    if (errno != 0)
+    {
+        PRINTERROR("clientAddr error");
+    }
+
+    return clientSocket;
 }
