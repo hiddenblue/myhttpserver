@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
         DieWithSystemMessage("getaaddrinfo() failed");
     }
 
+    // 上面的&addrList 只是对指针进行引入然后修改了他的值，并不需要*取值处理
     for (struct addrinfo *addr = addrList; addr != NULL; addr = addr->ai_next)
     {
         PrintSockaddr(addr->ai_addr, stdout);

@@ -1,6 +1,11 @@
 
 #include "printDNSAddr.h"
 
+/**
+ * @brief print sockaddr address and port. support both Ipv4 and Ipv6.
+ * @param sockAddr
+ * @param stream
+ */
 void PrintSockaddr(struct sockaddr *sockAddr, FILE *stream)
 {
     if ((sockAddr == NULL) || stream == NULL)

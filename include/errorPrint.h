@@ -11,6 +11,8 @@
 #ifndef __ERRORPRINT_H
 #define __ERRORPRINT_H
 
+#define PRINTERROR(str) fprintf(stdout, "\033[31mFunction  %s() error at file %s line %d Info: %s\033[0m\n", __func__, __FILE__, __LINE__, str);
+
 void DieWithUserMessage(const char *msg);
 
 void DieWithSystemMessage(const char *msg);
