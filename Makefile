@@ -13,11 +13,13 @@ inc := $(shell find include -name '*.h')
 
 objs := $(patsubst source/%.c,obj/%.o,$(src))
 
+incs := $(patsubst source/%.c,include/%.h,$(src))
+
 compile_option := -g -Wall -I $(include_path)
 
 # 我们尝试添加一个生成object的依赖选项 $< 右边的 $@左边的
 
-obj/%.o : source/%.c
+obj/%.o : source/%.c $(inc)
 	mkdir -p $(dir $@)
 	@# -c 选项会编译成object文件 不进行链接
 	@echo $< 
@@ -35,6 +37,7 @@ debug :
 	@echo $(src)
 	@echo $(inc)
 	@echo $(objs)
+	@echo $(incs)
 
 client : compile
 	mkdir -p  build
@@ -46,6 +49,6 @@ dns: compile
 
 server : compile
 	mkdir -p  build
-	cc $(compile_option) $(objs_path)/TCPechoserverv4.o $(objs_path)/errorPrint.o $(objs_path)/TCPUtility.o $(objs_path)/printDNSAddr.o -o $(exec_path)/server.o 
+	cc $(compile_option) $(objs_path)/TCPechoserverDualStack.o $(objs_path)/errorPrint.o $(objs_path)/TCPUtility.o $(objs_path)/printDNSAddr.o -o $(exec_path)/server.o 
 
 .PHONY : clean debug
